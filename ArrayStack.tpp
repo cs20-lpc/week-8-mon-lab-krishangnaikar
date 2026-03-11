@@ -1,6 +1,12 @@
+#include "ArrayStack.hpp"
 template <typename T>
 ArrayStack<T>::ArrayStack(int i) {
-    // TODO
+    if (i <= 0) {
+        throw string("Invalid stack size, must be greater than 0.\n");
+    }
+    buffer = new T[i];
+    maxSize = i;
+    this->length = 0;
 }
 
 template <typename T>
@@ -24,12 +30,20 @@ ArrayStack<T>::~ArrayStack() {
 
 template <typename T>
 void ArrayStack<T>::clear() {
-    // TODO
+    delete[] buffer;
+    buffer = nullptr;
+    this->length = 0;
+    maxSize = 0;
 }
 
 template <typename T>
 void ArrayStack<T>::copy(const ArrayStack<T>& copyObj) {
-    // TODO
+    this->length = copyObj.length;
+    this->maxSize = copyObj.maxSize;
+    buffer = new T[maxSize];
+    for (int i = 0; i < this->length; i++) {
+        buffer[i] = copyObj.buffer[i];
+    }
 }
 
 template <typename T>
@@ -54,22 +68,54 @@ bool ArrayStack<T>::isFull() const {
 
 template <typename T>
 T ArrayStack<T>::peek() const {
-    // TODO
+    if (this->length > 0) {
+        return buffer[this->length - 1];
+    }
+    else {
+        throw string("Stack is empty, cannot peek element.\n");
+    }
 }
 
 template <typename T>
 void ArrayStack<T>::pop() {
-    // TODO
+    if (this->length > 0) {
+        this->length--;
+        buffer[this->length] = T();
+    } else {
+        throw string("Stack is empty, cannot pop element.\n");
+    }
 }
 
 template <typename T>
 void ArrayStack<T>::push(const T& elem) {
-    // TODO
+    if (this->length < maxSize) {
+        buffer[this->length] = elem;
+        this->length++;
+    } else {
+        throw string("Stack is full, cannot push element.\n");
+    }
 }
 
 template <typename T>
 void ArrayStack<T>::rotate(typename Stack<T>::Direction dir) {
-    // TODO
+    if (this->length > 1) {
+        if (dir == Stack<T>::RIGHT) {
+            T temp = buffer[this->length - 1];
+            for (int i = this->length - 1; i > 0; i--) {
+                buffer[i] = buffer[i - 1];
+            }
+            buffer[0] = temp;
+        }
+        else if (dir == Stack<T>::LEFT) {
+            T temp = buffer[0];
+            for (int i = 0; i < this->length - 1; i++) {
+                buffer[i] = buffer[i + 1];
+            }
+            buffer[this->length - 1] = temp;
+        }
+    } else {
+        throw string("Stack has less than 2 elements, cannot rotate.\n");
+    }
 }
 
 template <typename T>
